@@ -20,7 +20,7 @@ const createIncome = async(req,res) =>{
       data: savedIncome, // ✅ return the actual expense
     });
     } catch (error) {
-        return res.json(error.message)
+        return res.status(500).json({ error: error.message });
     }
 }
 
@@ -36,7 +36,7 @@ const fetchAllIncome = async(req,res)=>{
     return res.json({income})
 
 } catch(error){
-    return res.json({error:error.message})
+    return res.status(500).json({ error: error.message });
 }
 }
 
@@ -50,7 +50,7 @@ const fetchOne = async(req,res) =>{
         }
         return res.json(income)
     } catch (error) {
-        return res.json(error.message)
+       return res.status(500).json({ error: error.message });
     }
 }
 
@@ -76,7 +76,7 @@ const UpdateIncome = async(req,res)=>{
 
         return res.json({"updated successfully" : income})
     } catch (error) {
-        return res.json(error.message)
+       return res.status(500).json({ error: error.message });
     }
 }
 
