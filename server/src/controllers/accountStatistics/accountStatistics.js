@@ -52,7 +52,7 @@ const accountStatsCtrl = async (req, res) => {
         });
 
     } catch (error) {
-        return res.json(error.message)
+        return res.status(500).json({ error: error.message });
     }
 };
 
