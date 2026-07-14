@@ -8,7 +8,7 @@ const createIncome = async(req,res) =>{
     try {
         const income = new Income({
             title,
-            amount,
+            amount : Number(amount),
             description,
             user : req?.user?._id
         })
@@ -29,8 +29,10 @@ const createIncome = async(req,res) =>{
 const fetchAllIncome = async(req,res)=>{
 
     try {
-    const {page} = req.query
-    const income = await Income.paginate({},{limit:10,page:Number(page),populate:'user'})
+    const {page} = req.query;
+    const queryPage = Number(page) || 1;
+
+    const income = await Income.paginate({user : req?.user?._id},{limit:10,page:queryPage,populate:'user'})
     return res.json({income})
 
 } catch(error){
@@ -42,7 +44,10 @@ const fetchAllIncome = async(req,res)=>{
 const fetchOne = async(req,res) =>{
     const {id} = req.params 
     try {
-        const income = await Income.findById(id)
+        const income = await Income.findById({_id : id, user : req?.user?._id})
+        if (!income) {
+            return res.status(404).json({ error: "Income not found or unauthorized" });
+        }
         return res.json(income)
     } catch (error) {
         return res.json(error.message)
@@ -55,13 +60,19 @@ const UpdateIncome = async(req,res)=>{
     const {id} = req.params
 
     try {
-        const income = await Income.findByIdAndUpdate(id,{
+        const income = await Income.findByIdAndUpdate(id,
+            {_id : id, user : req?.user?._id},
+            {
             title,
-            amount,
+            amount : Number(amount),
             description
         },{
             new : true
         })
+
+         if (!income) {
+            return res.status(404).json({ error: "Income not found or unauthorized to update" });
+        }
 
         return res.json({"updated successfully" : income})
     } catch (error) {
@@ -74,7 +85,7 @@ const UpdateIncome = async(req,res)=>{
 const deleteIncome = async (req, res) => {
     const { id } = req.params;
     try {
-        const income = await Income.findByIdAndDelete(id);
+        const income = await Income.findByIdAndDelete({_id : id, user : req?.user?._id});
         
         if (!income) {
             return res.status(404).json({ error: "Income not found" });
