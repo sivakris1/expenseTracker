@@ -1,4 +1,4 @@
-const Expense = require("../../models/Expense");
+const Expense = require("../../models/Expense.js");
 
 
 
@@ -15,6 +15,8 @@ const createExpense = async(req,res) =>{
 
        const savedExpense = await expense.save();
 
+       console.log(savedExpense)
+
     return res.status(201).json({
       success: "Your expense was created successfully",
       data: savedExpense, // ✅ return the actual expense
@@ -30,7 +32,7 @@ const fetchAllExpense = async(req,res)=>{
 
     try {
     const {page} = req.query;
-    const expense = await Expense.paginate({},{limit:10,page:Number(page),populate:'user'})
+    const expense = await Expense.paginate({user: req?.user?._id },{limit:10,page:Number(page),populate:'user'})
     return res.json({expense})
 
 } catch(error){
@@ -58,7 +60,7 @@ const UpdateExpense = async (req, res) => {
         console.log("Updating expense:", { id, title, amount, description });
 
         const expense = await Expense.findByIdAndUpdate(
-            id,
+            {_id : id, user : req?.user?._id},
             {
                 title,
                 amount: Number(amount),
@@ -87,7 +89,7 @@ const UpdateExpense = async (req, res) => {
 const deleteExpense = async (req, res) => {
     const { id } = req.params;
     try {
-        const expense = await Expense.findByIdAndDelete(id);
+        const expense = await Expense.findByIdAndDelete({_id : id, user : req?.user?._id});
         
         if (!expense) {
             return res.status(404).json({ error: "expense not found" });
