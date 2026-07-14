@@ -36,7 +36,7 @@ const fetchAllExpense = async(req,res)=>{
     return res.json({expense})
 
 } catch(error){
-    return res.json({error:message.error})
+    return res.json({error: error.message})
 }
 }
 
