@@ -18,6 +18,16 @@ const ExpenseSchema = new mongoose.Schema({
         required : [true, 'Amount is required'],
         type : Number
     },
+    category : {
+        type : String,
+        required : [true, 'Category is required'],
+        enum: ['Food', 'Transport', 'Rent', 'Shopping', 'Utilities', 'Entertainment', 'Health', 'Education', 'Others'],
+        default: 'Others'
+    },
+    date : {
+        type : Date,
+        default : Date.now
+    },
     user : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "User",
