@@ -4,22 +4,22 @@ const Expense = require("../../models/Expense.js");
 
 //Creating Expense for User
 const createExpense = async(req,res) =>{
-    const {title,amount,description,user} = req.body;
+    const {title,amount,description,category,date} = req.body;
     try {
         const expense = new Expense({
             title,
             amount,
             description,
+            category,
+            date : date ? new Date(date) : undefined,
             user : req?.user?._id
         })
 
        const savedExpense = await expense.save();
 
-       console.log(savedExpense)
-
     return res.status(201).json({
       success: "Your expense was created successfully",
-      data: savedExpense, // ✅ return the actual expense
+      data: savedExpense, 
     });
     } catch (error) {
         return res.json(error.message)
