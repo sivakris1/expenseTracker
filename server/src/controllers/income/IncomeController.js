@@ -4,12 +4,14 @@ const Income = require("../../models/Income");
 
 //Creating Income for User
 const createIncome = async(req,res) =>{
-    const {title,amount,description,user} = req.body;
+    const {title,amount,description,category,date} = req.body;
     try {
         const income = new Income({
             title,
             amount : Number(amount),
             description,
+            category,
+            date : date ? new Date(date) : undefined,
             user : req?.user?._id
         })
 
@@ -17,7 +19,7 @@ const createIncome = async(req,res) =>{
 
     return res.status(201).json({
       success: "Your income was created successfully",
-      data: savedIncome, // ✅ return the actual expense
+      data: savedIncome, 
     });
     } catch (error) {
         return res.status(500).json({ error: error.message });
