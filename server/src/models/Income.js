@@ -18,6 +18,16 @@ const incomeSchema = new mongoose.Schema({
         required : [true, 'Amount is required'],
         type : Number
     },
+    category : {
+        required : [true, 'Category is required'],
+        type : String,
+        enum : ['Salary', 'Freelance', 'Business', 'Investments', 'Gifts', 'Others'],
+        default : 'Others'
+    },
+    date : {
+        type : Date,
+        default : Date.now
+    },
     user : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "User",
