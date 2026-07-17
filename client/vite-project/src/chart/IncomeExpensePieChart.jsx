@@ -8,8 +8,6 @@ import {
 const COLORS = ['#0088FE', '#FF8042'];
 
 const IncomeExpensePieChart = ({ income, expense }) => {
-    console.log("PieChart Data: ", income, expense);
-
   const data = [
     { name: 'Income', value: income },
     { name: 'Expense', value: expense },

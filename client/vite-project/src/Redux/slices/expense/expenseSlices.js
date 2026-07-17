@@ -7,6 +7,13 @@ export const createExpAction = createAsyncThunk(
 async(payload, {rejectWithValue,getState,dispatch}) =>{
     
   const userToken = getState()?.users?.userAuth?.token ;
+
+    console.log("---- FRONTEND DEBUG ----");
+    console.log("Redux State users:", getState()?.users);
+    console.log("Retrieved Token:", userToken);
+    console.log("------------------------");
+
+    
         const config = {
             headers:{
                 "Content-Type":"application/json",
