@@ -19,8 +19,8 @@ const Register = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const user = useSelector(state => state?.users )
-    const {userAppErr,userServerErr,userLoading,userAuth} = user
-    console.log("userAuth",userAuth)
+  const {userAppErr,userServerErr,userLoading,isRegistered} = user
+  console.log("isRegistered", isRegistered)
 
   const formik = useFormik({
     initialValues:{
@@ -36,11 +36,12 @@ const Register = () => {
     validationSchema : formSchema
   })
 
-  useEffect(()=>{
-      if(userAuth){
-        navigate('/login')
-      }
-    },[userAuth])
+  useEffect(() => {
+  if (isRegistered) {
+    navigate('/login');
+  }
+}, [isRegistered]);
+
   return (
     <div className="d-flex vh-100">
       {/* Left Panel */}

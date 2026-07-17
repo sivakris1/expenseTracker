@@ -142,8 +142,7 @@ const usersSlices = createSlice({
 
   builder.addCase(registerUserAction.fulfilled, (state, action) => {
     console.log("Register Status: Fulfilled ✅", action.payload);
-    // state.userAuth = action?.payload;
-    state.userAuth = true;
+    state.isRegistered = true;
     state.userLoading = false;
     state.userAppErr = undefined;
     state.userServerErr = undefined;
