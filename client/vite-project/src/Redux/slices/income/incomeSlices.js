@@ -48,6 +48,25 @@ async(payload, {rejectWithValue,getState,dispatch}) =>{
   }
 )
 
+export const fetchSingleIncomeAction = createAsyncThunk(
+  "income/fetchSingle",
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    const userToken = getState()?.users?.userAuth?.token;
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`
+      },
+    };
+    try {
+      const { data } = await axios.get(`http://localhost:4990/api/income/${id}`, config);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+)
+
 export const updateIncomeAction = createAsyncThunk(
   "income/update",
   async({id,formData}, {rejectWithValue,getState,dispatch}) =>{
@@ -140,6 +159,24 @@ builder.addCase(updateIncomeAction.fulfilled, (state, action) => {
 
   builder.addCase(updateIncomeAction.rejected, (state, action) => {
     console.log("income Status: ❌", action.payload);
+    state.userLoading = false;
+    state.AppErr = action?.payload;
+    state.ServerErr = action?.error?.message;
+  });
+
+  // fetching single income
+  builder.addCase(fetchSingleIncomeAction.pending, (state, action) => {
+    state.userLoading = true;
+    state.AppErr = undefined;
+    state.ServerErr = undefined;
+  });
+  builder.addCase(fetchSingleIncomeAction.fulfilled, (state, action) => {
+    state.userLoading = false;
+    state.singleIncome = action.payload; // save details
+    state.AppErr = undefined;
+    state.ServerErr = undefined;
+  });
+  builder.addCase(fetchSingleIncomeAction.rejected, (state, action) => {
     state.userLoading = false;
     state.AppErr = action?.payload;
     state.ServerErr = action?.error?.message;

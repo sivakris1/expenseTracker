@@ -57,6 +57,25 @@ async(payload, {rejectWithValue,getState,dispatch}) =>{
   }
 )
 
+export const fetchSingleExpAction = createAsyncThunk(
+  "expense/fetchSingle",
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    const userToken = getState()?.users?.userAuth?.token;
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`
+      },
+    };
+    try {
+      const { data } = await axios.get(`http://localhost:4990/api/expense/${id}`, config);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+)
+
 
 export const updateExpSlice = createAsyncThunk(
   "expense/update",
@@ -151,6 +170,24 @@ builder.addCase(updateExpSlice.fulfilled, (state, action) => {
 
   builder.addCase(updateExpSlice.rejected, (state, action) => {
     console.log("Expense Status: ❌", action.payload);
+    state.userLoading = false;
+    state.AppErr = action?.payload;
+    state.ServerErr = action?.error?.message;
+  });
+
+  // fetching single expense
+  builder.addCase(fetchSingleExpAction.pending, (state, action) => {
+    state.userLoading = true;
+    state.AppErr = undefined;
+    state.ServerErr = undefined;
+  });
+  builder.addCase(fetchSingleExpAction.fulfilled, (state, action) => {
+    state.userLoading = false;
+    state.singleExpense = action.payload; // save details
+    state.AppErr = undefined;
+    state.ServerErr = undefined;
+  });
+  builder.addCase(fetchSingleExpAction.rejected, (state, action) => {
     state.userLoading = false;
     state.AppErr = action?.payload;
     state.ServerErr = action?.error?.message;
