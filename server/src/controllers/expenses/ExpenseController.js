@@ -53,35 +53,36 @@ const fetchOne = async(req,res) =>{
 
 //updating Expense
 const UpdateExpense = async (req, res) => {
-    const { title, amount, description } = req.body;
+    // 1. Destructure category and date
+    const { title, amount, description, category, date } = req.body;
     const { id } = req.params;
 
     try {
-        console.log("Updating expense:", { id, title, amount, description });
-
-        const expense = await Expense.findByIdAndUpdate(
-            {_id : id, user : req?.user?._id},
+        const expense = await Expense.findOneAndUpdate(
+            { _id: id, user: req?.user?._id },
             {
                 title,
                 amount: Number(amount),
-                description
+                description,
+                category, // 2. Save category
+                date: date ? new Date(date) : undefined // 3. Save date
             },
             {
                 new: true,
-                runValidators: true // optional but helps validate schema
+                runValidators: true
             }
         );
 
         if (!expense) {
-            return res.status(404).json({ error: "Expense not found" });
+            return res.status(404).json({ error: "Expense not found or unauthorized to update" });
         }
 
         return res.json({ message: "Updated successfully", expense });
     } catch (error) {
-        console.error("Update failed:", error);
         return res.status(500).json({ error: error.message });
     }
 };
+
 
 
 
