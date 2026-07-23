@@ -57,30 +57,37 @@ const fetchOne = async(req,res) =>{
 }
 
 //updating income
-const UpdateIncome = async(req,res)=>{
-    const {title,amount,description} = req.body
-    const {id} = req.params
+const UpdateIncome = async (req, res) => {
+    // 1. Destructure category and date
+    const { title, amount, description, category, date } = req.body;
+    const { id } = req.params;
 
     try {
-        const income = await Income.findByIdAndUpdate(id,
-            {_id : id, user : req?.user?._id},
+        const income = await Income.findOneAndUpdate(
+            { _id: id, user: req?.user?._id },
             {
-            title,
-            amount : Number(amount),
-            description
-        },{
-            new : true
-        })
+                title,
+                amount: Number(amount),
+                description,
+                category, // 2. Save category
+                date: date ? new Date(date) : undefined // 3. Save date
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
 
-         if (!income) {
+        if (!income) {
             return res.status(404).json({ error: "Income not found or unauthorized to update" });
         }
 
-        return res.json({"updated successfully" : income})
+        return res.json({ message: "Updated successfully", income });
     } catch (error) {
-       return res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: error.message });
     }
-}
+};
+
 
 
 //deleting income
